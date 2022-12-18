@@ -1,0 +1,15 @@
+{
+  "extends": "@antfu",
+
+  "rules": {
+    "no-console": "warn",
+    "no-prototype-builtins": "off",
+    "brace-style": "off",
+
+    "@typescript-eslint/brace-style": [
+      "warn",
+      "stroustrup",
+      { "allowSingleLine": true }
+    ]
+  }
+}
