@@ -2,7 +2,6 @@
   "name": "portal-gif",
   "version": "0.0.0",
   "private": true,
-  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "run-p type-check build-only",
@@ -11,7 +10,8 @@
     "test:e2e": "playwright test",
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "@project-serum/anchor": "^0.25.0",
@@ -20,6 +20,7 @@
     "vue-router": "^4.1.6"
   },
   "devDependencies": {
+    "@antfu/eslint-config": "^0.34.0",
     "@playwright/test": "^1.28.1",
     "@rushstack/eslint-patch": "^1.2.0",
     "@types/jsdom": "^20.0.1",
