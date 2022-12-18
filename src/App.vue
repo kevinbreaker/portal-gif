@@ -1,19 +1,43 @@
 <script setup lang="ts">
-import twitterLogo from "@/assets/twitter.svg";
+import { onMounted } from 'vue'
 
-const TWITTER_HANDLE = "web3dev_";
-const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
+import twitterLogo from '@assets/twitter.svg'
+import Button from '@components/Button.vue'
+
+import useWalletConnect from '@composables/useWalletConnect'
+
+const TWITTER_HANDLE = 'web3dev_'
+const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`
+
+const {
+  publicKey,
+  isWalletConnected,
+  connectWallet,
+  hasConnection,
+} = useWalletConnect()
+
+onMounted(() => {
+  isWalletConnected()
+})
 </script>
 
 <template>
   <main class="main-container">
     <header class="header">
-      <h1 class="title">Portfólio de GIFs</h1>
-      <p class="description">Veja sua coleção de GIF no metaverso ✨</p>
+      <h1 class="title">
+        Portfólio de GIFs
+      </h1>
+      <p class="description">
+        Veja sua coleção de GIF no metaverso ✨
+      </p>
+
+      <Button v-if="!hasConnection" @click="connectWallet">
+        Conecte sua carteira
+      </Button>
     </header>
 
     <footer class="footer">
-      <img alt="Twitter Logo" class="twitter" :src="twitterLogo" />
+      <img alt="Twitter Logo" class="twitter" :src="twitterLogo">
 
       <a class="link" :href="TWITTER_LINK" target="_blank" rel="noreferrer">
         feito com ❤️ por @{{ TWITTER_HANDLE }}
@@ -43,6 +67,7 @@ const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
 
     > .description {
       @apply text-lg sm:text-xl;
+      @apply mb-6;
     }
   }
 
