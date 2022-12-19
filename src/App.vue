@@ -2,19 +2,13 @@
 import { onMounted } from 'vue'
 
 import twitterLogo from '@assets/twitter.svg'
-import Button from '@components/Button.vue'
 
 import useWalletConnect from '@composables/useWalletConnect'
 
 const TWITTER_HANDLE = 'web3dev_'
 const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`
 
-const {
-  publicKey,
-  isWalletConnected,
-  connectWallet,
-  hasConnection,
-} = useWalletConnect()
+const { isWalletConnected } = useWalletConnect()
 
 onMounted(() => {
   isWalletConnected()
@@ -22,19 +16,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <main class="main-container">
-    <header class="header">
-      <h1 class="title">
-        Portfólio de GIFs
-      </h1>
-      <p class="description">
-        Veja sua coleção de GIF no metaverso ✨
-      </p>
-
-      <Button v-if="!hasConnection" @click="connectWallet">
-        Conecte sua carteira
-      </Button>
-    </header>
+  <div class="main-container">
+    <RouterView />
 
     <footer class="footer">
       <img alt="Twitter Logo" class="twitter" :src="twitterLogo">
@@ -43,20 +26,29 @@ onMounted(() => {
         feito com ❤️ por @{{ TWITTER_HANDLE }}
       </a>
     </footer>
-  </main>
+  </div>
 </template>
 
 <style lang="scss">
 .main-container {
   @apply grid place-content-center;
-  @apply h-screen;
+  @apply min-h-screen h-full;
   @apply bg-primary;
   @apply text-center;
   // background: linear-gradient(180deg, #3b2667 40%, #bc78ec 85%);
 
   > .header {
-    @apply mb-1/2;
+    // @apply mb-1/2;
+    @apply mb-6;
     @apply text-light-50 font-bold;
+  }
+
+  > .gif-content {
+    @apply py-4 px-2;
+    @apply h-full;
+    @apply overflow-x-auto;
+
+    max-height: 60vh;
   }
 
   > .header {
@@ -74,7 +66,7 @@ onMounted(() => {
   > .footer {
     @apply flex justify-center items-center;
     @apply absolute bottom-0;
-    @apply w-full pb-6;
+    @apply w-full pb-2 md:pb-6;
   }
 
   > .footer {
