@@ -20,6 +20,7 @@ defineProps<{
 
   > .image {
     @apply w-full;
+    // max-h-80 max-w-80;
 
     grid-row: 1 / -1;
     grid-column: 1;

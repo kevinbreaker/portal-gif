@@ -1,44 +1,115 @@
 <script setup lang="ts">
+import { Buffer } from 'buffer'
 import { onMounted, ref } from 'vue'
 
 import Search from '@components/Search.vue'
 import GifsContainer from '@components/GifsContainer.vue'
 
 import useWalletConnect from '@composables/useWalletConnect'
+import { useProvider } from '@composables/useProvider'
 
-const { publicKey, isWalletConnected } = useWalletConnect()
+interface GifList {
+  gifLink: string
+  user_address: string
+}
+
+const { isWalletConnected } = useWalletConnect()
 
 const search = ref('')
 const gifItems = ref<string[]>([])
 
-const TEST_GIFS = [
-  'https://i.giphy.com/media/xUOxffMyVjqAnuJpJu/giphy.webp',
-  'https://media3.giphy.com/media/26n7aJwq73ubRevoQ/giphy.gif?cid=ecf05e47gpuxzul6z0774k47hcjp5p74uwfbfaq4xfjjco0c&rid=giphy.gif&ct=g',
-  'https://media3.giphy.com/media/3o7aD5euYKz5Ly7Wq4/giphy.gif?cid=ecf05e47gx235xsfy7tqmzvhwz06ztzaxr63av1f446mlluz&rid=giphy.gif&ct=g',
-  'https://media2.giphy.com/media/XKwfxBDG32ayrLHfAY/giphy.gif?cid=ecf05e47he0xf0mwnfx51x1f6m0wi4hzi52ql2dh0lnfe0tk&rid=giphy.gif&ct=g',
-  // 'https://i.giphy.com/media/xUOxffMyVjqAnuJpJu/giphy.webp',
-  // 'https://media3.giphy.com/media/26n7aJwq73ubRevoQ/giphy.gif?cid=ecf05e47gpuxzul6z0774k47hcjp5p74uwfbfaq4xfjjco0c&rid=giphy.gif&ct=g',
-  // 'https://media3.giphy.com/media/3o7aD5euYKz5Ly7Wq4/giphy.gif?cid=ecf05e47gx235xsfy7tqmzvhwz06ztzaxr63av1f446mlluz&rid=giphy.gif&ct=g',
+const { getProvider, getProgram, baseAccount, SystemProgram } = useProvider()
 
-  // 'https://media2.giphy.com/media/XKwfxBDG32ayrLHfAY/giphy.gif?cid=ecf05e47he0xf0mwnfx51x1f6m0wi4hzi52ql2dh0lnfe0tk&rid=giphy.gif&ct=g',
-  // 'https://i.giphy.com/media/xUOxffMyVjqAnuJpJu/giphy.webp',
-  // 'https://media3.giphy.com/media/3o7aD5euYKz5Ly7Wq4/giphy.gif?cid=ecf05e47gx235xsfy7tqmzvhwz06ztzaxr63av1f446mlluz&rid=giphy.gif&ct=g',
+const retry = ref(true)
 
-  // 'https://i.giphy.com/media/xUOxffMyVjqAnuJpJu/giphy.webp',
-  // 'https://media3.giphy.com/media/3o7aD5euYKz5Ly7Wq4/giphy.gif?cid=ecf05e47gx235xsfy7tqmzvhwz06ztzaxr63av1f446mlluz&rid=giphy.gif&ct=g',
-  // 'https://media2.giphy.com/media/XKwfxBDG32ayrLHfAY/giphy.gif?cid=ecf05e47he0xf0mwnfx51x1f6m0wi4hzi52ql2dh0lnfe0tk&rid=giphy.gif&ct=g',
-]
+async function fetchGIF() {
+  try {
+    window.Buffer = Buffer
+    const provider = getProvider()
+    const program = getProgram(provider)
 
-function fetchGIF() {
-  console.log(search.value)
-  gifItems.value.push(search.value)
-  search.value = ''
+    await program.methods
+      .addGif(search.value)
+      .accounts({
+        baseAccount: baseAccount.publicKey,
+        user: provider.wallet.publicKey,
+      })
+      .rpc()
+
+    const account = await program.account.baseAccount.fetch(
+      baseAccount.publicKey,
+    )
+
+    gifItems.value = (account.gifList as GifList[]).map(el => el.gifLink)
+    search.value = ''
+  }
+  catch (err) {
+    console.error('Error on fetch new Gif ', err)
+  }
+}
+
+async function createGIFAccount() {
+  try {
+    const provider = getProvider()
+    const program = getProgram(provider)
+
+    console.log('🏓')
+
+    await program.methods
+      .startStuffOff()
+      .accounts({
+        baseAccount: baseAccount.publicKey,
+        user: provider.wallet.publicKey,
+        systemProgram: SystemProgram.programId,
+      })
+      .signers([baseAccount])
+      .rpc()
+
+    console.log(
+      'BaseAccount criado com sucesso com o endereço :',
+      baseAccount.publicKey.toString(),
+    )
+
+    await getGifList()
+  }
+  catch (error) {
+    console.error('Error on create BaseAccount ', error)
+  }
+}
+
+async function getGifList() {
+  try {
+    const provider = getProvider()
+    const program = getProgram(provider)
+
+    const account = await program.account.baseAccount.fetch(
+      baseAccount.publicKey,
+    )
+
+    sanitizeGifList(account.gifList)
+  }
+  catch (error) {
+    console.error('Error on get GIFs: ', error)
+
+    gifItems.value = []
+
+    if (retry.value) {
+      retry.value = false
+      createGIFAccount()
+    }
+  }
+}
+
+function sanitizeGifList(gifList: GifList[]) {
+  gifItems.value = gifList.map(gif => gif.gifLink)
 }
 
 onMounted(() => {
   isWalletConnected()
 
-  gifItems.value = TEST_GIFS
+  getGifList()
+
+  gifItems.value = []
 })
 </script>
 
