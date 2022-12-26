@@ -1,12 +1,7 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 
-import twitterLogo from '@assets/twitter.svg'
-
 import useWalletConnect from '@composables/useWalletConnect'
-
-const TWITTER_HANDLE = 'web3dev_'
-const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`
 
 const { isWalletConnected } = useWalletConnect()
 
@@ -18,14 +13,6 @@ onMounted(() => {
 <template>
   <div class="main-container">
     <RouterView />
-
-    <footer class="footer">
-      <img alt="Twitter Logo" class="twitter" :src="twitterLogo">
-
-      <a class="link" :href="TWITTER_LINK" target="_blank" rel="noreferrer">
-        feito com ❤️ por @{{ TWITTER_HANDLE }}
-      </a>
-    </footer>
   </div>
 </template>
 
@@ -38,7 +25,6 @@ onMounted(() => {
   // background: linear-gradient(180deg, #3b2667 40%, #bc78ec 85%);
 
   > .header {
-    // @apply mb-1/2;
     @apply mb-6;
     @apply text-light-50 font-bold;
   }

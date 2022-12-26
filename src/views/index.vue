@@ -17,11 +17,11 @@ const {
 onMounted(() => {
   isWalletConnected()
   if (hasConnection)
-    router.replace({ name: 'MyPortal' })
+    router.replace({ name: 'Portal' })
 })
 
 watch(hasConnection, connected =>
-  connected && router.replace({ name: 'MyPortal' }))
+  connected && router.replace({ name: 'Portal' }))
 </script>
 
 <template>

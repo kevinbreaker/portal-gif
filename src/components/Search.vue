@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import Button from '@components/Button.vue'
 import { computed } from 'vue'
 
 const props = defineProps<{
@@ -27,10 +26,6 @@ const model = computed({
       class="search-input"
       :placeholder="placeholder"
     >
-
-    <Button class="button">
-      Enviar
-    </Button>
   </form>
 </template>
 

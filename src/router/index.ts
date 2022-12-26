@@ -9,8 +9,8 @@ const router = createRouter({
       component: () => import('@/views/index.vue'),
     },
     {
-      path: '/my-portal',
-      name: 'MyPortal',
+      path: '/portal',
+      name: 'Portal',
       meta: {
         auth: true,
       },
@@ -28,7 +28,7 @@ router.beforeEach((to, from, next) => {
   if (to.meta.auth && !window.solana?.publicKey)
     next({ name: 'Home' })
   else if (to.name === 'Home' && window.solana?.publicKey?.length)
-    next({ name: 'MyPortal' })
+    next({ name: 'Portal' })
   else
     next()
 })
